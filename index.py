@@ -73,6 +73,29 @@ class Book:
         return len(self.name.get()) != 0 and len(self.price.get()) != 0
 
 
+     # Function to Execute Database Querys
+    def run_query(self, query, parameters = ()):
+        with sqlite3.connect(self.db_name) as conn:
+            cursor = conn.cursor()
+            result = cursor.execute(query, parameters)
+            conn.commit()
+        return result
+
+    # Get Book from Database
+    def get_book(self):
+        # cleaning Table 
+        records = self.tree.get_children()
+        for element in records:
+            self.tree.delete(element)
+        # getting data
+        query = 'SELECT * FROM book ORDER BY name DESC'
+        db_rows = self.run_query(query)
+        # filling data
+        for row in db_rows:
+            self.tree.insert('', 0, text = row[1], values = row[2])
+
+   
+
 
 if __name__ == '__main__':
     window = Tk()
